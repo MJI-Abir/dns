@@ -45,12 +45,15 @@ public class AuthServer extends Thread {
                     if (type.equals("A") || type.equals("AAAA")) {
                         response.add(request + "    " + value + "    " + type + "    " + ttl);
                     }
-                    System.out.println(response);
                 }
 
                 line = reader.readLine();
 
                 // ----send NOT FOUND message---- //
+                if(line == null) {
+                    response.add("SORRY");
+                    response.add("DOMAIN NOT FOUND!");
+                }
             }
 
             reader.close();
@@ -63,6 +66,7 @@ public class AuthServer extends Thread {
 
     @Override
     public void run() {
+        // ********* Iterative DNS Resolution ********* //
         // ----Client Message---- //
         String message = new String(packet.getData(), 0, packet.getLength());
         System.out.println("Client Request: " + message);
@@ -79,6 +83,24 @@ public class AuthServer extends Thread {
                 throw new RuntimeException(e);
             }
         }
+
+        // ********* Recursive DNS Resolution ********* //
+        // ----CLIENT MESSAGE---- //
+//        String message = new String(packet.getData(), 0, packet.getLength());
+//        System.out.println("Client Request: " + message);
+//
+//        // ----SEND RECORDS TO TLD SERVER---- //
+//        ArrayList<String> response = lookup(message);
+//        for (String s : response) {
+//            messageByte = s.getBytes();
+//            packet = new DatagramPacket(messageByte, messageByte.length, packet.getAddress(), packet.getPort());
+//            try {
+//                socket.send(packet);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException(e);
+//            }
+//        }
 
     }
 }
